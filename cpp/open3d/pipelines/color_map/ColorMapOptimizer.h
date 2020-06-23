@@ -70,22 +70,6 @@ public:
 protected:
     void CreateGradientImages();
 
-    static std::vector<std::shared_ptr<geometry::Image>>
-    CreateDepthBoundaryMasks(
-            const std::vector<std::shared_ptr<geometry::Image>>& images_depth,
-            double depth_threshold_for_discontinuity_check,
-            double half_dilation_kernel_size_for_discontinuity_map);
-
-    static std::tuple<std::vector<std::vector<int>>,
-                      std::vector<std::vector<int>>>
-    CreateVertexAndImageVisibility(
-            const geometry::TriangleMesh& mesh,
-            const std::vector<std::shared_ptr<geometry::Image>>& images_rgbd,
-            const std::vector<std::shared_ptr<geometry::Image>>& images_mask,
-            const camera::PinholeCameraTrajectory& camera_trajectory,
-            double maximum_allowable_depth,
-            double depth_threshold_for_visibility_check);
-
 protected:
     std::shared_ptr<geometry::TriangleMesh> mesh_;
     std::vector<std::shared_ptr<geometry::RGBDImage>> images_rgbd_;
