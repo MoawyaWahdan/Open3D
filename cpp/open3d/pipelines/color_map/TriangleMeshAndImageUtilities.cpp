@@ -53,6 +53,22 @@ std::tuple<float, float, float> Project3DPointAndGetUVDepth(
     return std::make_tuple(u, v, z);
 }
 
+std::vector<std::shared_ptr<geometry::Image>> CreateDepthBoundaryMasks(
+        const std::vector<std::shared_ptr<geometry::Image>>& images_depth,
+        double depth_threshold_for_discontinuity_check,
+        double half_dilation_kernel_size_for_discontinuity_map) {
+    auto n_images = images_depth.size();
+    std::vector<std::shared_ptr<geometry::Image>> masks;
+    for (size_t i = 0; i < n_images; i++) {
+        utility::LogDebug("[MakeDepthMasks] geometry::Image {:d}/{:d}", i,
+                          n_images);
+        masks.push_back(images_depth[i]->CreateDepthBoundaryMask(
+                depth_threshold_for_discontinuity_check,
+                half_dilation_kernel_size_for_discontinuity_map));
+    }
+    return masks;
+}
+
 std::tuple<std::vector<std::vector<int>>, std::vector<std::vector<int>>>
 CreateVertexAndImageVisibility(
         const geometry::TriangleMesh& mesh,

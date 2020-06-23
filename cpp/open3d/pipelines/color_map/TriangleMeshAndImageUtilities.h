@@ -47,6 +47,11 @@ std::tuple<float, float, float> Project3DPointAndGetUVDepth(
         const camera::PinholeCameraTrajectory& camera,
         int camid);
 
+std::vector<std::shared_ptr<geometry::Image>> CreateDepthBoundaryMasks(
+        const std::vector<std::shared_ptr<geometry::Image>>& images_depth,
+        double depth_threshold_for_discontinuity_check,
+        double half_dilation_kernel_size_for_discontinuity_map);
+
 std::tuple<std::vector<std::vector<int>>, std::vector<std::vector<int>>>
 CreateVertexAndImageVisibility(
         const geometry::TriangleMesh& mesh,
