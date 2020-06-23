@@ -343,7 +343,7 @@ void SetGeometryColorAverage(
 void SetGeometryColorAverage(
         geometry::TriangleMesh& mesh,
         const std::vector<std::shared_ptr<geometry::Image>>& images_color,
-        const std::vector<ImageWarpingField>& warping_fields,
+        const utility::optional<std::vector<ImageWarpingField>>& warping_fields,
         const camera::PinholeCameraTrajectory& camera,
         const std::vector<std::vector<int>>& visibility_vertex_to_image,
         int image_boundary_margin /*= 10*/,
@@ -365,14 +365,14 @@ void SetGeometryColorAverage(
             unsigned char r_temp, g_temp, b_temp;
             bool valid = false;
             std::tie(valid, r_temp) = QueryImageIntensity<unsigned char>(
-                    *images_color[j], warping_fields[j], mesh.vertices_[i],
-                    camera, j, 0, image_boundary_margin);
+                    *images_color[j], warping_fields.value()[j],
+                    mesh.vertices_[i], camera, j, 0, image_boundary_margin);
             std::tie(valid, g_temp) = QueryImageIntensity<unsigned char>(
-                    *images_color[j], warping_fields[j], mesh.vertices_[i],
-                    camera, j, 1, image_boundary_margin);
+                    *images_color[j], warping_fields.value()[j],
+                    mesh.vertices_[i], camera, j, 1, image_boundary_margin);
             std::tie(valid, b_temp) = QueryImageIntensity<unsigned char>(
-                    *images_color[j], warping_fields[j], mesh.vertices_[i],
-                    camera, j, 2, image_boundary_margin);
+                    *images_color[j], warping_fields.value()[j],
+                    mesh.vertices_[i], camera, j, 2, image_boundary_margin);
             float r = (float)r_temp / 255.0f;
             float g = (float)g_temp / 255.0f;
             float b = (float)b_temp / 255.0f;
