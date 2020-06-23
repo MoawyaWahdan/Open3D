@@ -54,14 +54,9 @@ public:
     std::shared_ptr<geometry::TriangleMesh> GetMesh() const { return mesh_; }
 
 protected:
-    void CreateGradientImages();
-
-protected:
     std::shared_ptr<geometry::TriangleMesh> mesh_;
     std::vector<std::shared_ptr<geometry::RGBDImage>> images_rgbd_;
     std::shared_ptr<camera::PinholeCameraTrajectory> camera_trajectory_;
-
-protected:
     std::vector<std::shared_ptr<geometry::Image>> images_gray_;
     std::vector<std::shared_ptr<geometry::Image>> images_dx_;
     std::vector<std::shared_ptr<geometry::Image>> images_dy_;

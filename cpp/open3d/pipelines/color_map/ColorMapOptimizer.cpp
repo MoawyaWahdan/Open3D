@@ -44,7 +44,14 @@ namespace open3d {
 namespace pipelines {
 namespace color_map {
 
-void ColorMapOptimizer::CreateGradientImages() {
+ColorMapOptimizer::ColorMapOptimizer(
+        const geometry::TriangleMesh& mesh,
+        const std::vector<std::shared_ptr<geometry::RGBDImage>>& images_rgbd,
+        const camera::PinholeCameraTrajectory& camera_trajectory)
+    : mesh_(std::make_shared<geometry::TriangleMesh>(mesh)),
+      images_rgbd_(images_rgbd),
+      camera_trajectory_(std::make_shared<camera::PinholeCameraTrajectory>(
+              camera_trajectory)) {
     utility::LogDebug("[ColorMapOptimization] :: CreateGradientImages");
     for (size_t i = 0; i < images_rgbd_.size(); i++) {
         auto gray_image = images_rgbd_[i]->color_.CreateFloatImage();
@@ -60,18 +67,6 @@ void ColorMapOptimizer::CreateGradientImages() {
         images_color_.push_back(color);
         images_depth_.push_back(depth);
     }
-}
-
-ColorMapOptimizer::ColorMapOptimizer(
-        const geometry::TriangleMesh& mesh,
-        const std::vector<std::shared_ptr<geometry::RGBDImage>>& images_rgbd,
-        const camera::PinholeCameraTrajectory& camera_trajectory)
-    : mesh_(std::make_shared<geometry::TriangleMesh>(mesh)),
-      images_rgbd_(images_rgbd),
-      camera_trajectory_(std::make_shared<camera::PinholeCameraTrajectory>(
-              camera_trajectory)) {
-    // Fills images_gray_, images_dx_, images_dy_, images_color_, images_depth_
-    CreateGradientImages();
 }
 
 void ColorMapOptimizer::RunRigidOptimizer(const RigidOptimizerOption& option) {
