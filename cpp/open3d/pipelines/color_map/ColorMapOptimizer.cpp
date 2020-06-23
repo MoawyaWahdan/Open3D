@@ -85,11 +85,20 @@ void ColorMapOptimizer::RunRigidOptimization(
     RigidOptimizer optimizer(mesh_, images_rgbd_, camera_trajectory_,
                              images_gray_, images_dx_, images_dy_,
                              images_color_, images_depth_);
-    optimizer.Run(maximum_iteration, maximum_allowable_depth,
-                  depth_threshold_for_visibility_check,
-                  depth_threshold_for_discontinuity_check,
-                  half_dilation_kernel_size_for_discontinuity_map,
-                  image_boundary_margin, invisible_vertex_color_knn);
+
+    RigidOptimizerOption option;
+    option.maximum_iteration_ = maximum_iteration;
+    option.maximum_allowable_depth_ = maximum_allowable_depth;
+    option.depth_threshold_for_visibility_check_ =
+            depth_threshold_for_visibility_check;
+    option.depth_threshold_for_discontinuity_check_ =
+            depth_threshold_for_discontinuity_check;
+    option.half_dilation_kernel_size_for_discontinuity_map_ =
+            half_dilation_kernel_size_for_discontinuity_map;
+    option.image_boundary_margin_ = image_boundary_margin;
+    option.invisible_vertex_color_knn_ = invisible_vertex_color_knn;
+
+    optimizer.Run(option);
 }
 
 void ColorMapOptimizer::RunNonRigidOptimization(

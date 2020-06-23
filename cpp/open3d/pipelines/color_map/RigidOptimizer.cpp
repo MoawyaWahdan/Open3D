@@ -35,18 +35,13 @@ namespace open3d {
 namespace pipelines {
 namespace color_map {
 
-void RigidOptimizer::Run(int maximum_iteration,
-                         double maximum_allowable_depth,
-                         double depth_threshold_for_visibility_check,
-                         double depth_threshold_for_discontinuity_check,
-                         double half_dilation_kernel_size_for_discontinuity_map,
-                         int image_boundary_margin,
-                         int invisible_vertex_color_knn) {
+void RigidOptimizer::Run(const RigidOptimizerOption& option) {
     utility::LogDebug("[ColorMapOptimization] :: MakingMasks");
     std::vector<std::shared_ptr<geometry::Image>> images_mask =
             CreateDepthBoundaryMasks(
-                    images_depth_, depth_threshold_for_discontinuity_check,
-                    half_dilation_kernel_size_for_discontinuity_map);
+                    images_depth_,
+                    option.depth_threshold_for_discontinuity_check_,
+                    option.half_dilation_kernel_size_for_discontinuity_map_);
 
     utility::LogDebug("[ColorMapOptimization] :: VisibilityCheck");
     std::vector<std::vector<int>> visibility_vertex_to_image;
@@ -54,8 +49,8 @@ void RigidOptimizer::Run(int maximum_iteration,
     std::tie(visibility_vertex_to_image, visibility_image_to_vertex) =
             CreateVertexAndImageVisibility(
                     *mesh_, images_depth_, images_mask, *camera_trajectory_,
-                    maximum_allowable_depth,
-                    depth_threshold_for_visibility_check);
+                    option.maximum_allowable_depth_,
+                    option.depth_threshold_for_visibility_check_);
 
     utility::LogDebug("[ColorMapOptimization] :: Run Rigid Optimization");
     std::vector<double> proxy_intensity;
@@ -63,8 +58,8 @@ void RigidOptimizer::Run(int maximum_iteration,
     int n_camera = int(camera_trajectory_->parameters_.size());
     SetProxyIntensityForVertex(*mesh_, images_gray_, *camera_trajectory_,
                                visibility_vertex_to_image, proxy_intensity,
-                               image_boundary_margin);
-    for (int itr = 0; itr < maximum_iteration; itr++) {
+                               option.image_boundary_margin_);
+    for (int itr = 0; itr < option.maximum_iteration_; itr++) {
         utility::LogDebug("[Iteration {:04d}] ", itr + 1);
         double residual = 0.0;
         total_num_ = 0;
@@ -86,7 +81,8 @@ void RigidOptimizer::Run(int maximum_iteration,
                 ComputeJacobianAndResidualRigid(
                         i, J_r, r, *mesh_, proxy_intensity, images_gray_[c],
                         images_dx_[c], images_dy_[c], intr, extrinsic,
-                        visibility_image_to_vertex[c], image_boundary_margin);
+                        visibility_image_to_vertex[c],
+                        option.image_boundary_margin_);
             };
             Eigen::Matrix6d JTJ;
             Eigen::Vector6d JTr;
@@ -115,13 +111,14 @@ void RigidOptimizer::Run(int maximum_iteration,
                           residual / total_num_);
         SetProxyIntensityForVertex(*mesh_, images_gray_, *camera_trajectory_,
                                    visibility_vertex_to_image, proxy_intensity,
-                                   image_boundary_margin);
+                                   option.image_boundary_margin_);
     }
 
     utility::LogDebug("[ColorMapOptimization] :: Set Mesh Color");
     SetGeometryColorAverage(*mesh_, images_color_, *camera_trajectory_,
-                            visibility_vertex_to_image, image_boundary_margin,
-                            invisible_vertex_color_knn);
+                            visibility_vertex_to_image,
+                            option.image_boundary_margin_,
+                            option.invisible_vertex_color_knn_);
 }
 
 }  // namespace color_map
