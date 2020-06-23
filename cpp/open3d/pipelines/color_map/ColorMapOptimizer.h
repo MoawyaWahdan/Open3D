@@ -65,8 +65,7 @@ public:
             int image_boundary_margin = 10,
             int invisible_vertex_color_knn = 3);
 
-    geometry::TriangleMesh& GetMesh() { return mesh_; }
-    geometry::TriangleMesh const& GetMesh() const { return mesh_; }
+    std::shared_ptr<geometry::TriangleMesh> GetMesh() const { return mesh_; }
 
 protected:
     void CreateGradientImages();
@@ -88,9 +87,9 @@ protected:
             double depth_threshold_for_visibility_check);
 
 protected:
-    geometry::TriangleMesh mesh_;
+    std::shared_ptr<geometry::TriangleMesh> mesh_;
     std::vector<std::shared_ptr<geometry::RGBDImage>> images_rgbd_;
-    camera::PinholeCameraTrajectory camera_trajectory_;
+    std::shared_ptr<camera::PinholeCameraTrajectory> camera_trajectory_;
 
 protected:
     std::vector<std::shared_ptr<geometry::Image>> images_gray_;

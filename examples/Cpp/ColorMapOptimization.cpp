@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
                                                       *camera);
     optimizer.RunNonRigidOptimization(16, 0.316, 300);
     io::WriteTriangleMesh("color_map_after_optimization.ply",
-                          optimizer.GetMesh());
+                          *optimizer.GetMesh());
 
     return 0;
 }
