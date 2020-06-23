@@ -31,8 +31,17 @@
 
 #include "open3d/geometry/Image.h"
 #include "open3d/geometry/TriangleMesh.h"
-#include "open3d/pipelines/color_map/EigenHelperForNonRigidOptimization.h"
 #include "open3d/utility/Eigen.h"
+
+/// @cond
+namespace Eigen {
+
+typedef Eigen::Matrix<double, 14, 14> Matrix14d;
+typedef Eigen::Matrix<double, 14, 1> Vector14d;
+typedef Eigen::Matrix<int, 14, 1> Vector14i;
+
+}  // namespace Eigen
+/// @endcond
 
 namespace open3d {
 namespace pipelines {
@@ -78,6 +87,22 @@ void ComputeJacobianAndResidualNonRigid(
         const Eigen::Matrix4d& extrinsic,
         const std::vector<int>& visibility_image_to_vertex,
         const int image_boundary_margin);
+
+/// Function to compute JTJ and Jtr
+/// Input: function pointer f and total number of rows of Jacobian matrix
+/// Output: JTJ, JTr, sum of r^2
+/// Note: this function is almost identical to the functions in
+/// Utility/Eigen.h/cpp, but this function takes additional multiplication
+/// pattern that can produce JTJ having hundreds of rows and columns.
+template <typename VecInTypeDouble,
+          typename VecInTypeInt,
+          typename MatOutType,
+          typename VecOutType>
+std::tuple<MatOutType, VecOutType, double> ComputeJTJandJTrNonRigid(
+        std::function<void(int, VecInTypeDouble&, double&, VecInTypeInt&)> f,
+        int iteration_num,
+        int nonrigidval,
+        bool verbose = true);
 
 }  // namespace color_map
 }  // namespace pipelines
