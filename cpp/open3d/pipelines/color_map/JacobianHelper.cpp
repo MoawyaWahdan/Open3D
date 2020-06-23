@@ -24,7 +24,7 @@
 // IN THE SOFTWARE.
 // ----------------------------------------------------------------------------
 
-#include "open3d/pipelines/color_map/ColorMapOptimizationJacobian.h"
+#include "open3d/pipelines/color_map/JacobianHelper.h"
 
 #include "open3d/geometry/Image.h"
 #include "open3d/geometry/TriangleMesh.h"
