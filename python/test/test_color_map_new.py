@@ -66,13 +66,13 @@ def test_color_map():
 
     # Computes averaged color without optimization, for debugging
     optimizer.run_rigid_optimizer(
-        o3d.pipelines.color_map.rigid_optimizer_option(maximum_iteration=0))
+        o3d.pipelines.color_map.RigidOptimizerOption(maximum_iteration=0))
     # Rigid Optimization
     optimizer.run_rigid_optimizer(
-        o3d.pipelines.color_map.rigid_optimizer_option(maximum_iteration=5))
+        o3d.pipelines.color_map.RigidOptimizerOption(maximum_iteration=5))
     # Non-rigid Optimization
     optimizer.run_non_rigid_optimizer(
-        o3d.pipelines.color_map.non_rigid_optimizer_option(maximum_iteration=5))
+        o3d.pipelines.color_map.NonRigidOptimizerOption(maximum_iteration=5))
 
     # Black box test with hard-coded result values. The results of
     # color_map_optimization are deterministic. This test ensures the refactored
