@@ -49,20 +49,11 @@ static std::vector<ImageWarpingField> CreateWarpingFields(
     return fields;
 }
 
-void NonRigidOptimizer::Run(
-        int number_of_vertical_anchors,
-        double non_rigid_anchor_point_weight,
-        int maximum_iteration,
-        double maximum_allowable_depth,
-        double depth_threshold_for_visibility_check,
-        double depth_threshold_for_discontinuity_check,
-        double half_dilation_kernel_size_for_discontinuity_map,
-        int image_boundary_margin,
-        int invisible_vertex_color_knn) {
+void NonRigidOptimizer::Run(const NonRigidOptimizerOption& option) {
     utility::LogDebug("[ColorMapOptimization] :: MakingMasks");
     auto images_mask = CreateDepthBoundaryMasks(
-            images_depth_, depth_threshold_for_discontinuity_check,
-            half_dilation_kernel_size_for_discontinuity_map);
+            images_depth_, option.depth_threshold_for_discontinuity_check_,
+            option.half_dilation_kernel_size_for_discontinuity_map_);
 
     utility::LogDebug("[ColorMapOptimization] :: VisibilityCheck");
     std::vector<std::vector<int>> visibility_vertex_to_image;
@@ -70,21 +61,21 @@ void NonRigidOptimizer::Run(
     std::tie(visibility_vertex_to_image, visibility_image_to_vertex) =
             CreateVertexAndImageVisibility(
                     *mesh_, images_depth_, images_mask, *camera_trajectory_,
-                    maximum_allowable_depth,
-                    depth_threshold_for_visibility_check);
+                    option.maximum_allowable_depth_,
+                    option.depth_threshold_for_visibility_check_);
 
     utility::LogDebug("[ColorMapOptimization] :: Run Non-Rigid Optimization");
-    auto warping_fields =
-            CreateWarpingFields(images_gray_, number_of_vertical_anchors);
-    auto warping_fields_init =
-            CreateWarpingFields(images_gray_, number_of_vertical_anchors);
+    auto warping_fields = CreateWarpingFields(
+            images_gray_, option.number_of_vertical_anchors_);
+    auto warping_fields_init = CreateWarpingFields(
+            images_gray_, option.number_of_vertical_anchors_);
     std::vector<double> proxy_intensity;
     auto n_vertex = mesh_->vertices_.size();
     int n_camera = int(camera_trajectory_->parameters_.size());
     SetProxyIntensityForVertex(*mesh_, images_gray_, warping_fields,
                                *camera_trajectory_, visibility_vertex_to_image,
-                               proxy_intensity, image_boundary_margin);
-    for (int itr = 0; itr < maximum_iteration; itr++) {
+                               proxy_intensity, option.image_boundary_margin_);
+    for (int itr = 0; itr < option.maximum_iteration_; itr++) {
         utility::LogDebug("[Iteration {:04d}] ", itr + 1);
         double residual = 0.0;
         double residual_reg = 0.0;
@@ -113,7 +104,7 @@ void NonRigidOptimizer::Run(
                         images_gray_[c], images_dx_[c], images_dy_[c],
                         warping_fields[c], warping_fields_init[c], intr,
                         extrinsic, visibility_image_to_vertex[c],
-                        image_boundary_margin);
+                        option.image_boundary_margin_);
             };
             Eigen::MatrixXd JTJ;
             Eigen::VectorXd JTr;
@@ -124,7 +115,7 @@ void NonRigidOptimizer::Run(
                             f_lambda, int(visibility_image_to_vertex[c].size()),
                             nonrigidval, false);
 
-            double weight = non_rigid_anchor_point_weight *
+            double weight = option.non_rigid_anchor_point_weight_ *
                             visibility_image_to_vertex[c].size() / n_vertex;
             for (int j = 0; j < nonrigidval; j++) {
                 double r = weight * (warping_fields[c].flow_(j) -
@@ -163,13 +154,14 @@ void NonRigidOptimizer::Run(
         SetProxyIntensityForVertex(*mesh_, images_gray_, warping_fields,
                                    *camera_trajectory_,
                                    visibility_vertex_to_image, proxy_intensity,
-                                   image_boundary_margin);
+                                   option.image_boundary_margin_);
     }
 
     utility::LogDebug("[ColorMapOptimization] :: Set Mesh Color");
     SetGeometryColorAverage(*mesh_, images_color_, warping_fields,
                             *camera_trajectory_, visibility_vertex_to_image,
-                            image_boundary_margin, invisible_vertex_color_knn);
+                            option.image_boundary_margin_,
+                            option.invisible_vertex_color_knn_);
 }
 
 }  // namespace color_map

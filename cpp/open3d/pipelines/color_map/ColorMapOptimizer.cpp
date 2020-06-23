@@ -114,12 +114,22 @@ void ColorMapOptimizer::RunNonRigidOptimization(
     NonRigidOptimizer optimizer(mesh_, images_rgbd_, camera_trajectory_,
                                 images_gray_, images_dx_, images_dy_,
                                 images_color_, images_depth_);
-    optimizer.Run(number_of_vertical_anchors, non_rigid_anchor_point_weight,
-                  maximum_iteration, maximum_allowable_depth,
-                  depth_threshold_for_visibility_check,
-                  depth_threshold_for_discontinuity_check,
-                  half_dilation_kernel_size_for_discontinuity_map,
-                  image_boundary_margin, invisible_vertex_color_knn);
+
+    NonRigidOptimizerOption option;
+    option.number_of_vertical_anchors_ = number_of_vertical_anchors;
+    option.non_rigid_anchor_point_weight_ = non_rigid_anchor_point_weight;
+    option.maximum_iteration_ = maximum_iteration;
+    option.maximum_allowable_depth_ = maximum_allowable_depth;
+    option.depth_threshold_for_visibility_check_ =
+            depth_threshold_for_visibility_check;
+    option.depth_threshold_for_discontinuity_check_ =
+            depth_threshold_for_discontinuity_check;
+    option.half_dilation_kernel_size_for_discontinuity_map_ =
+            half_dilation_kernel_size_for_discontinuity_map;
+    option.image_boundary_margin_ = image_boundary_margin;
+    option.invisible_vertex_color_knn_ = invisible_vertex_color_knn;
+
+    optimizer.Run(option);
 }
 
 }  // namespace color_map
