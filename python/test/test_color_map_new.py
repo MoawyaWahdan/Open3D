@@ -65,36 +65,14 @@ def test_color_map():
         mesh, rgbd_images, camera_trajectory)
 
     # Computes averaged color without optimization, for debugging
-    optimizer.run_rigid_optimization(
-        maximum_iteration=0,
-        maximum_allowable_depth=2.5,
-        depth_threshold_for_visibility_check=0.03,
-        depth_threshold_for_discontinuity_check=0.1,
-        half_dilation_kernel_size_for_discontinuity_map=3,
-        image_boundary_margin=10,
-        invisible_vertex_color_knn=3)
-
+    optimizer.run_rigid_optimizer(
+        o3d.pipelines.color_map.rigid_optimizer_option(maximum_iteration=0))
     # Rigid Optimization
-    optimizer.run_rigid_optimization(
-        maximum_iteration=5,
-        maximum_allowable_depth=2.5,
-        depth_threshold_for_visibility_check=0.03,
-        depth_threshold_for_discontinuity_check=0.1,
-        half_dilation_kernel_size_for_discontinuity_map=3,
-        image_boundary_margin=10,
-        invisible_vertex_color_knn=3)
-
+    optimizer.run_rigid_optimizer(
+        o3d.pipelines.color_map.rigid_optimizer_option(maximum_iteration=5))
     # Non-rigid Optimization
-    optimizer.run_non_rigid_optimization(
-        number_of_vertical_anchors=16,
-        non_rigid_anchor_point_weight=0.316,
-        maximum_iteration=5,
-        maximum_allowable_depth=2.5,
-        depth_threshold_for_visibility_check=0.03,
-        depth_threshold_for_discontinuity_check=0.1,
-        half_dilation_kernel_size_for_discontinuity_map=3,
-        image_boundary_margin=10,
-        invisible_vertex_color_knn=3)
+    optimizer.run_non_rigid_optimizer(
+        o3d.pipelines.color_map.non_rigid_optimizer_option(maximum_iteration=5))
 
     # Black box test with hard-coded result values. The results of
     # color_map_optimization are deterministic. This test ensures the refactored

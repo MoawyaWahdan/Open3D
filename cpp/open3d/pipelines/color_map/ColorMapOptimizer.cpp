@@ -74,61 +74,18 @@ ColorMapOptimizer::ColorMapOptimizer(
     CreateGradientImages();
 }
 
-void ColorMapOptimizer::RunRigidOptimization(
-        int maximum_iteration,
-        double maximum_allowable_depth,
-        double depth_threshold_for_visibility_check,
-        double depth_threshold_for_discontinuity_check,
-        double half_dilation_kernel_size_for_discontinuity_map,
-        int image_boundary_margin,
-        int invisible_vertex_color_knn) {
+void ColorMapOptimizer::RunRigidOptimizer(const RigidOptimizerOption& option) {
     RigidOptimizer optimizer(mesh_, images_rgbd_, camera_trajectory_,
                              images_gray_, images_dx_, images_dy_,
                              images_color_, images_depth_);
-
-    RigidOptimizerOption option;
-    option.maximum_iteration_ = maximum_iteration;
-    option.maximum_allowable_depth_ = maximum_allowable_depth;
-    option.depth_threshold_for_visibility_check_ =
-            depth_threshold_for_visibility_check;
-    option.depth_threshold_for_discontinuity_check_ =
-            depth_threshold_for_discontinuity_check;
-    option.half_dilation_kernel_size_for_discontinuity_map_ =
-            half_dilation_kernel_size_for_discontinuity_map;
-    option.image_boundary_margin_ = image_boundary_margin;
-    option.invisible_vertex_color_knn_ = invisible_vertex_color_knn;
-
     optimizer.Run(option);
 }
 
-void ColorMapOptimizer::RunNonRigidOptimization(
-        int number_of_vertical_anchors,
-        double non_rigid_anchor_point_weight,
-        int maximum_iteration,
-        double maximum_allowable_depth,
-        double depth_threshold_for_visibility_check,
-        double depth_threshold_for_discontinuity_check,
-        double half_dilation_kernel_size_for_discontinuity_map,
-        int image_boundary_margin,
-        int invisible_vertex_color_knn) {
+void ColorMapOptimizer::RunNonRigidOptimizer(
+        const NonRigidOptimizerOption& option) {
     NonRigidOptimizer optimizer(mesh_, images_rgbd_, camera_trajectory_,
                                 images_gray_, images_dx_, images_dy_,
                                 images_color_, images_depth_);
-
-    NonRigidOptimizerOption option;
-    option.number_of_vertical_anchors_ = number_of_vertical_anchors;
-    option.non_rigid_anchor_point_weight_ = non_rigid_anchor_point_weight;
-    option.maximum_iteration_ = maximum_iteration;
-    option.maximum_allowable_depth_ = maximum_allowable_depth;
-    option.depth_threshold_for_visibility_check_ =
-            depth_threshold_for_visibility_check;
-    option.depth_threshold_for_discontinuity_check_ =
-            depth_threshold_for_discontinuity_check;
-    option.half_dilation_kernel_size_for_discontinuity_map_ =
-            half_dilation_kernel_size_for_discontinuity_map;
-    option.image_boundary_margin_ = image_boundary_margin;
-    option.invisible_vertex_color_knn_ = invisible_vertex_color_knn;
-
     optimizer.Run(option);
 }
 

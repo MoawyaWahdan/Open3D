@@ -33,6 +33,8 @@
 #include "open3d/geometry/Image.h"
 #include "open3d/geometry/RGBDImage.h"
 #include "open3d/geometry/TriangleMesh.h"
+#include "open3d/pipelines/color_map/NonRigidOptimizer.h"
+#include "open3d/pipelines/color_map/RigidOptimizer.h"
 
 namespace open3d {
 namespace pipelines {
@@ -45,25 +47,9 @@ public:
                               images_rgbd,
                       const camera::PinholeCameraTrajectory& camera_trajectory);
 
-    void RunRigidOptimization(
-            int maximum_iteration = 0,
-            double maximum_allowable_depth = 2.5,
-            double depth_threshold_for_visibility_check = 0.03,
-            double depth_threshold_for_discontinuity_check = 0.1,
-            double half_dilation_kernel_size_for_discontinuity_map = 3,
-            int image_boundary_margin = 10,
-            int invisible_vertex_color_knn = 3);
+    void RunRigidOptimizer(const RigidOptimizerOption& option);
 
-    void RunNonRigidOptimization(
-            int number_of_vertical_anchors = 16,
-            double non_rigid_anchor_point_weight = 0.316,
-            int maximum_iteration = 0,
-            double maximum_allowable_depth = 2.5,
-            double depth_threshold_for_visibility_check = 0.03,
-            double depth_threshold_for_discontinuity_check = 0.1,
-            double half_dilation_kernel_size_for_discontinuity_map = 3,
-            int image_boundary_margin = 10,
-            int invisible_vertex_color_knn = 3);
+    void RunNonRigidOptimizer(const NonRigidOptimizerOption& option);
 
     std::shared_ptr<geometry::TriangleMesh> GetMesh() const { return mesh_; }
 

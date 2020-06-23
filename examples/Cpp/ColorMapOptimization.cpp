@@ -67,7 +67,8 @@ int main(int argc, char *argv[]) {
     // SIGGRAPH 2014
     pipelines::color_map::ColorMapOptimizer optimizer(*mesh, rgbd_images,
                                                       *camera);
-    optimizer.RunNonRigidOptimization(16, 0.316, 300);
+    pipelines::color_map::NonRigidOptimizerOption non_rigid_option;  // Default
+    optimizer.RunNonRigidOptimizer(non_rigid_option);
     io::WriteTriangleMesh("color_map_after_optimization.ply",
                           *optimizer.GetMesh());
 

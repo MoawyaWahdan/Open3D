@@ -38,6 +38,74 @@ namespace open3d {
 void pybind_color_map(py::module &m) {
     py::module m_submodule = m.def_submodule("color_map");
 
+    py::class_<pipelines::color_map::RigidOptimizerOption>
+            rigid_optimizer_option(m_submodule, "RigidOptimizerOption",
+                                   "Rigid optimizer option class.");
+    rigid_optimizer_option.def(
+            py::init([](int maximum_iteration, double maximum_allowable_depth,
+                        double depth_threshold_for_visibility_check,
+                        double depth_threshold_for_discontinuity_check,
+                        double half_dilation_kernel_size_for_discontinuity_map,
+                        int image_boundary_margin,
+                        int invisible_vertex_color_knn) {
+                auto option = new pipelines::color_map::RigidOptimizerOption;
+                option->maximum_iteration_ = maximum_iteration;
+                option->maximum_allowable_depth_ = maximum_allowable_depth;
+                option->depth_threshold_for_visibility_check_ =
+                        depth_threshold_for_visibility_check;
+                option->depth_threshold_for_discontinuity_check_ =
+                        depth_threshold_for_discontinuity_check;
+                option->half_dilation_kernel_size_for_discontinuity_map_ =
+                        half_dilation_kernel_size_for_discontinuity_map;
+                option->image_boundary_margin_ = image_boundary_margin;
+                option->invisible_vertex_color_knn_ =
+                        invisible_vertex_color_knn;
+                return option;
+            }),
+            "maximum_iteration"_a = 0, "maximum_allowable_depth"_a = 2.5,
+            "depth_threshold_for_visibility_check"_a = 0.03,
+            "depth_threshold_for_discontinuity_check"_a = 0.1,
+            "half_dilation_kernel_size_for_discontinuity_map"_a = 3,
+            "image_boundary_margin"_a = 10, "invisible_vertex_color_knn"_a = 3);
+
+    py::class_<pipelines::color_map::NonRigidOptimizerOption>
+            non_rigid_optimizer_option(m_submodule, "NonRigidOptimizerOption",
+                                       "Non Rigid optimizer option class.");
+    non_rigid_optimizer_option.def(
+            py::init([](int number_of_vertical_anchors,
+                        double non_rigid_anchor_point_weight,
+                        int maximum_iteration, double maximum_allowable_depth,
+                        double depth_threshold_for_visibility_check,
+                        double depth_threshold_for_discontinuity_check,
+                        double half_dilation_kernel_size_for_discontinuity_map,
+                        int image_boundary_margin,
+                        int invisible_vertex_color_knn) {
+                auto option = new pipelines::color_map::NonRigidOptimizerOption;
+                option->number_of_vertical_anchors_ =
+                        number_of_vertical_anchors;
+                option->non_rigid_anchor_point_weight_ =
+                        non_rigid_anchor_point_weight;
+                option->maximum_iteration_ = maximum_iteration;
+                option->maximum_allowable_depth_ = maximum_allowable_depth;
+                option->depth_threshold_for_visibility_check_ =
+                        depth_threshold_for_visibility_check;
+                option->depth_threshold_for_discontinuity_check_ =
+                        depth_threshold_for_discontinuity_check;
+                option->half_dilation_kernel_size_for_discontinuity_map_ =
+                        half_dilation_kernel_size_for_discontinuity_map;
+                option->image_boundary_margin_ = image_boundary_margin;
+                option->invisible_vertex_color_knn_ =
+                        invisible_vertex_color_knn;
+                return option;
+            }),
+            "number_of_vertical_anchors"_a = 16,
+            "non_rigid_anchor_point_weight"_a = 0.316,
+            "maximum_iteration"_a = 0, "maximum_allowable_depth"_a = 2.5,
+            "depth_threshold_for_visibility_check"_a = 0.03,
+            "depth_threshold_for_discontinuity_check"_a = 0.1,
+            "half_dilation_kernel_size_for_discontinuity_map"_a = 3,
+            "image_boundary_margin"_a = 10, "invisible_vertex_color_knn"_a = 3);
+
     py::class_<pipelines::color_map::ColorMapOptimizer> color_map_optimizer(
             m_submodule, "ColorMapOptimizer",
             "Class for color map optimization.");
@@ -57,23 +125,11 @@ void pybind_color_map(py::module &m) {
                 return optimizer.GetMesh();
             });
     color_map_optimizer.def(
-            "run_rigid_optimization",
-            &pipelines::color_map::ColorMapOptimizer::RunRigidOptimization,
-            "maximum_iteration"_a = 0, "maximum_allowable_depth"_a = 2.5,
-            "depth_threshold_for_visibility_check"_a = 0.03,
-            "depth_threshold_for_discontinuity_check"_a = 0.1,
-            "half_dilation_kernel_size_for_discontinuity_map"_a = 3,
-            "image_boundary_margin"_a = 10, "invisible_vertex_color_knn"_a = 3);
+            "run_rigid_optimizer",
+            &pipelines::color_map::ColorMapOptimizer::RunRigidOptimizer);
     color_map_optimizer.def(
-            "run_non_rigid_optimization",
-            &pipelines::color_map::ColorMapOptimizer::RunNonRigidOptimization,
-            "number_of_vertical_anchors"_a = 16,
-            "non_rigid_anchor_point_weight"_a = 0.316,
-            "maximum_iteration"_a = 0, "maximum_allowable_depth"_a = 2.5,
-            "depth_threshold_for_visibility_check"_a = 0.03,
-            "depth_threshold_for_discontinuity_check"_a = 0.1,
-            "half_dilation_kernel_size_for_discontinuity_map"_a = 3,
-            "image_boundary_margin"_a = 10, "invisible_vertex_color_knn"_a = 3);
+            "run_non_rigid_optimizer",
+            &pipelines::color_map::ColorMapOptimizer::RunNonRigidOptimizer);
 }
 
 }  // namespace open3d
