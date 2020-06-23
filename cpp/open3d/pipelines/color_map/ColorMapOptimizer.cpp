@@ -216,13 +216,12 @@ void ColorMapOptimizer::RunRigidOptimization(
             auto intrinsic = camera_trajectory_.parameters_[c]
                                      .intrinsic_.intrinsic_matrix_;
             auto extrinsic = camera_trajectory_.parameters_[c].extrinsic_;
-            ColorMapOptimizationJacobian jac;
             Eigen::Matrix4d intr = Eigen::Matrix4d::Zero();
             intr.block<3, 3>(0, 0) = intrinsic;
             intr(3, 3) = 1.0;
 
             auto f_lambda = [&](int i, Eigen::Vector6d& J_r, double& r) {
-                jac.ComputeJacobianAndResidualRigid(
+                ComputeJacobianAndResidualRigid(
                         i, J_r, r, mesh_, proxy_intensity, images_gray_[c],
                         images_dx_[c], images_dy_[c], intr, extrinsic,
                         visibility_image_to_vertex[c], image_boundary_margin);
@@ -316,14 +315,13 @@ void ColorMapOptimizer::RunNonRigidOptimization(
             auto intrinsic = camera_trajectory_.parameters_[c]
                                      .intrinsic_.intrinsic_matrix_;
             auto extrinsic = camera_trajectory_.parameters_[c].extrinsic_;
-            ColorMapOptimizationJacobian jac;
             Eigen::Matrix4d intr = Eigen::Matrix4d::Zero();
             intr.block<3, 3>(0, 0) = intrinsic;
             intr(3, 3) = 1.0;
 
             auto f_lambda = [&](int i, Eigen::Vector14d& J_r, double& r,
                                 Eigen::Vector14i& pattern) {
-                jac.ComputeJacobianAndResidualNonRigid(
+                ComputeJacobianAndResidualNonRigid(
                         i, J_r, r, pattern, mesh_, proxy_intensity,
                         images_gray_[c], images_dx_[c], images_dy_[c],
                         warping_fields[c], warping_fields_init[c], intr,

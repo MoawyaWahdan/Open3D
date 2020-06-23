@@ -35,7 +35,7 @@ namespace open3d {
 namespace pipelines {
 namespace color_map {
 
-void ColorMapOptimizationJacobian::ComputeJacobianAndResidualRigid(
+void ComputeJacobianAndResidualRigid(
         int row,
         Eigen::Vector6d& J_r,
         double& r,
@@ -76,7 +76,7 @@ void ColorMapOptimizationJacobian::ComputeJacobianAndResidualRigid(
     r = (gray - proxy_intensity[vid]);
 }
 
-void ColorMapOptimizationJacobian::ComputeJacobianAndResidualNonRigid(
+void ComputeJacobianAndResidualNonRigid(
         int row,
         Eigen::Vector14d& J_r,
         double& r,
