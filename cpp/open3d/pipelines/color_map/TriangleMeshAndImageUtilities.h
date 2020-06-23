@@ -34,6 +34,7 @@
 #include "open3d/geometry/RGBDImage.h"
 #include "open3d/geometry/TriangleMesh.h"
 #include "open3d/utility/Eigen.h"
+#include "open3d/utility/Optional.h"
 
 namespace open3d {
 namespace pipelines {
